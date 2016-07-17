@@ -6,7 +6,7 @@
 //
 // Usage:
 //
-// conf = jsonconf.ReadFile("config.json")
+// conf := jsonconf.ReadFile("config.json")
 // port, ok := conf("tcp.port", 80).(int)
 // ...
 // host, ok := conf("tcp.host", "microsoft.com").(string)
