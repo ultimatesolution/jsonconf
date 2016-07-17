@@ -34,7 +34,6 @@ func Test(t *testing.T) {
 		t.Error("invalid 'nested.int'")
 	}
 	t.Logf("str_array type:%v\n", reflect.TypeOf(c("str_array", 110)))
-	//t.Error("fff")
 	if s, ok := c("str_array", []string{"foo", "bar"}).([]string); !ok || len(s) != 3 || s[2] != "three" {
 		t.Errorf("invalid 'str_array' '%s'\n", s[2])
 	}
@@ -43,6 +42,20 @@ func Test(t *testing.T) {
 	}
 	if s, ok := c("int_array", []int64{100, 101}).([]int64); !ok || len(s) != 4 || s[2] != 2 {
 		t.Errorf("invalid 'str_array' '%s'\n", s[2])
+	}
+}
+
+func TestInvalidConf(t *testing.T) {
+	c, err := ReadString("invalid json")
+	if err == nil {
+		t.Error("ReadString must fail")
+		return
+	}
+	if val, ok := c("foo", "bar").(string); !ok || val != "bar" {
+		t.Fail()
+	}
+	if val, ok := c("foo.bar", 10).(int64); !ok || val != 10 {
+		t.Fail()
 	}
 }
 

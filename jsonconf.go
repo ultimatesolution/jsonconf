@@ -47,10 +47,18 @@ func convertToIntSlice(s reflect.Value) interface{} {
 }
 
 // Preprocess result to make it more convenient for usage in the caller's code.
+// Convert all numbers to int64
 // Convert []interface{} to []string or []int64 for JSON arrays.
 func preprocess(v interface{}) interface{} {
 	s := reflect.ValueOf(v)
-	if s.Kind() != reflect.Slice || s.Len() == 0 || s.Index(0).Kind() != reflect.Interface {
+	switch s.Kind()  {
+	case reflect.Float32, reflect.Float64:
+		return int64(s.Float())
+	case reflect.Int:
+		return s.Int()
+	}
+	if s.Kind() != reflect.Slice || s.Len() == 0 ||
+				s.Index(0).Kind() != reflect.Interface {
 		return v
 	}
 	iface := s.Index(0).Interface()
@@ -67,21 +75,17 @@ func preprocess(v interface{}) interface{} {
 func read(data []byte) (c Config, err error) {
 	json, err := gabs.ParseJSON(data)
 	if err != nil {
+		// Use default values if the config has not been read
+		c = func (key string, defVal interface{}) interface{} {
+			return preprocess(defVal)
+		}
 		return
 	}
 	c = func (key string, defVal interface{}) interface{} {
 		if !json.ExistsP(key) {
-			s := reflect.ValueOf(defVal)
-			if s.Kind() == reflect.Int {
-				return s.Int()
-			}
-			return defVal
+			return preprocess(defVal)
 		}
 		v := json.Path(key).Data()
-		// Float values are not supported in configs
-		if f, ok := v.(float64); ok {
-			return int64(f)
-		}
 		return preprocess(v)
 	}
 	return
