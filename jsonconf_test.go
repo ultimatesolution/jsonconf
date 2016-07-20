@@ -45,10 +45,24 @@ func Test(t *testing.T) {
 	}
 }
 
-func TestInvalidConf(t *testing.T) {
+func TestInvalidConfString(t *testing.T) {
 	c, err := ReadString("invalid json")
 	if err == nil {
 		t.Error("ReadString must fail")
+		return
+	}
+	if val, ok := c("foo", "bar").(string); !ok || val != "bar" {
+		t.Fail()
+	}
+	if val, ok := c("foo.bar", 10).(int64); !ok || val != 10 {
+		t.Fail()
+	}
+}
+
+func TestInvalidConfFile(t *testing.T) {
+	c, err := ReadFile("invalid file name")
+	if err == nil {
+		t.Error("ReadFile must fail")
 		return
 	}
 	if val, ok := c("foo", "bar").(string); !ok || val != "bar" {

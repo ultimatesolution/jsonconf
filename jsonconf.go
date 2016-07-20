@@ -72,13 +72,15 @@ func preprocess(v interface{}) interface{} {
 	}
 }
 
+var defConfig = func (key string, defVal interface{}) interface{} {
+	return preprocess(defVal)
+}
+
 func read(data []byte) (c Config, err error) {
 	json, err := gabs.ParseJSON(data)
 	if err != nil {
 		// Use default values if the config has not been read
-		c = func (key string, defVal interface{}) interface{} {
-			return preprocess(defVal)
-		}
+		c = defConfig
 		return
 	}
 	c = func (key string, defVal interface{}) interface{} {
@@ -99,6 +101,7 @@ func ReadString(s string) (c Config, err error) {
 func ReadFile(filename string) (c Config, err error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
+		c = defConfig
 		return
 	}
 	c, err = read(data)
