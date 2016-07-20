@@ -6,7 +6,7 @@
 //
 // Usage:
 //
-// conf = jsonconf.ReadFile("config.json")
+// conf := jsonconf.ReadFile("config.json")
 // port, ok := conf("tcp.port", 80).(int)
 // ...
 // host, ok := conf("tcp.host", "microsoft.com").(string)
@@ -14,7 +14,7 @@
 // clusters, ok := conf("clusters", []string{}{"default"}).([]string)
 // ...
 // /* or the same without ", ok" if you are sure about your config, e.g.: */
-// name := conf("client.name", "noname")
+// name := conf("client.name", "noname").(string)
 //
 // (c) 2016 Eugene Korenevsky
 
