@@ -1,5 +1,5 @@
 // A minimalistic JSON config reader.
-// No nasty struct definitions, int client code, just one-line retrieving
+// No nasty struct definitions in client code, just one-line retrieving
 // values by keys.
 // All numeric values in JSON configs are converted to int64 type.
 // JSON arrays are returned as []string and []int64.
